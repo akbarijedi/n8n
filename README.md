@@ -1,4 +1,5 @@
 # n8n
+![App Screenshot](./n8n.png)
 Docker base n8n on a VPS Server with VOLUME to never loose your DATA.
 
 
