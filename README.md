@@ -3,7 +3,7 @@ Docker base n8n on a VPS Server with VOLUME to never loose your DATA.
 
 
 ✅ Step-by-step: Persistent n8n with Docker
-1. Create a Docker Volume (optional but recommended)
+# Create a Docker Volume (optional but recommended)
 ```
  docker volume create n8n_data
 ```
