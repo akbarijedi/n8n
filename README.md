@@ -101,3 +101,17 @@ RUN:
 ```
 docker-compose up -d
 ```
+
+4. Test
+Open https://YOURDOMAIN.com → should load without SSL warnings.
+________________________
+In Google OAuth settings, redirect URI must be:
+
+```
+https://YOURDOMAIN.com/rest/oauth2-credential/callback
+```
+(no :5678 here, since the proxy serves on 443).
+
+
+
+### GOOD LUCK :)
