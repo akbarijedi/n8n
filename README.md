@@ -2,6 +2,11 @@
 ![App Screenshot](./n8n.png)
 
 ### Docker base n8n on a VPS Server with VOLUME to never loose your DATA + HTTPS.
+For services like Gmail OAuth to work, you MUST useing HTTPS redirect URI.Let a reverse proxy (Caddy or Nginx) handle HTTPS on port 443 and forward traffic to n8n internally.
+
+Keep your existing .env mostly the same, but adjust N8N_PORT to match the port inside the container (still 5678), and set WEBHOOK_URL so OAuth URLs match your public domain without the port.
+
+
 
 
 #### >>>>> please change: YOURDOMAIN.com (change) with your real domain in below configuration
