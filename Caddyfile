@@ -1,0 +1,7 @@
+{
+  email youEmail@example.com
+}
+
+n8n.cyberwebstart.de {
+  reverse_proxy n8n:5678
+}
