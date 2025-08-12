@@ -4,13 +4,32 @@ services:
   n8n:
     image: n8nio/n8n:latest
     restart: always
-    ports:
-      - "5678:5678"
     env_file:
       - .env
     volumes:
       - n8n_data:/home/node/.n8n
+    networks:
+      - n8n_net
+
+  caddy:
+    image: caddy:2
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - n8n_net
 
 volumes:
   n8n_data:
     external: true
+  caddy_data:
+  caddy_config:
+
+networks:
+  n8n_net:
+    driver: bridge
