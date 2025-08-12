@@ -1,7 +1,10 @@
 # n8n
 ![App Screenshot](./n8n.png)
-Docker base n8n on a VPS Server with VOLUME to never loose your DATA.
 
+### Docker base n8n on a VPS Server with VOLUME to never loose your DATA + HTTPS.
+
+
+#### >>>>> please change: YOURDOMAIN.com (change) with your real domain in below configuration
 
 ✅ Step-by-step: Persistent n8n with Docker
 # Create a Docker Volume (optional but recommended)
@@ -10,61 +13,86 @@ Docker base n8n on a VPS Server with VOLUME to never loose your DATA.
 ```
 
    
-## create files:
+## Files & folder structure (create in your project root)
+```
+./docker-compose.yml
+./Caddyfile
+./.env               # n8n env (optional)
+```
 
-1. .env
+# Here’s the simplest working setup for your case, using Caddy (automatic HTTPS):
 
-2. docker-compose.yml
+1. Adjust .env
+```
+N8N_BASIC_AUTH_ACTIVE=true
+N8N_BASIC_AUTH_USER=modir
+N8N_BASIC_AUTH_PASSWORD=StrongPass!
+
+N8N_HOST=YOURDOMAIN.com (change)
+N8N_PORT=5678
+N8N_PROTOCOL=https
+N8N_SECURE_COOKIE=false
+
+WEBHOOK_URL=https://YOURDOMAIN.com (change)
+
+# IMPORTANT: this key is used to encrypt credentials
+N8N_ENCRYPTION_KEY=qwaszxwesdxcerdfcvrtfgvbtyghbnyu
+
+GENERIC_TIMEZONE=Europe/Paris
+```
+
+2. New docker-compose.yml
+```
+version: "3.8"
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - n8n_net
+
+  caddy:
+    image: caddy:2
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - n8n_net
+
+volumes:
+  n8n_data:
+    external: true
+  caddy_data:
+  caddy_config:
+
+networks:
+  n8n_net:
+    driver: bridge
+```
 
 
+3. Caddyfile
+```
+{
+  email you@example.com
+}
+
+YOURDOMAIN.com (change) {
+  reverse_proxy n8n:5678
+}
+```
+
+RUN:
 ```
 docker-compose up -d
 ```
-
-
-________________________
-
-
-Updating n8n in Docker is simple and safe — especially if you're using volumes for persistent data (like you are). Here's the safe and correct way to update:
-
-```
-docker run --rm -v n8n_data:/data -v $(pwd):/backup alpine \
-  tar czf /backup/n8n-backup.tar.gz -C /data .
-```
- 
- ### Pull the latest n8n Docker image - Update to the latest version
-```
-docker pull n8nio/n8n:latest
-```
-
-
-### If you're using docker-compose:
-```
-docker compose down
-```
-
-### Start it again (with the updated image)
-```
-docker compose up -d
-```
-
-_____________________
-
-## Manual Run latest version
-docker run -d --name n8n \
-  -v n8n_data:/home/node/.n8n \
-  -p 5678:5678 \
-  --env-file .env \
-  n8nio/n8n:latest
-
-_____________________
-
-
-## Optional: Pin a specific version
-If you want to avoid surprises from :latest, specify a version:
-
-```
-image: n8nio/n8n:1.45.0
-```
-You can check available tags here:
-👉 https://hub.docker.com/r/n8nio/n8n/tags
